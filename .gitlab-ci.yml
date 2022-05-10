@@ -47,11 +47,11 @@ build:
          unzip
   script:
     - cd rtems
-    - ../source-builder/sb-set-builder \
-            --log=1-$TARGET \
-            --prefix=/opt/rtems/6 \
-            --bset-tar-file \
-            --no-install \
+    - ../source-builder/sb-set-builder
+            --log=1-$TARGET
+            --prefix=/opt/rtems/6
+            --bset-tar-file
+            --no-install
             6/rtems-$TARGET
   artifacts:
     name: "rsb-$TARGET"
