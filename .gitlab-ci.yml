@@ -30,6 +30,7 @@ build:
   before_script:
     - apt-get -qq update
     - DEBIAN_FRONTEND=noninteractive TZ=Europe/Berlin apt-get -qq install -y
+         git
          build-essential
          flex
          bison
@@ -43,6 +44,7 @@ build:
          python-is-python3
          libpython3-dev
          python3-dev
+         unzip
   script:
     - cd rtems
     - ../source-builder/sb-set-builder \
