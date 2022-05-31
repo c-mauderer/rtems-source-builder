@@ -43,6 +43,13 @@ jobs:
           path: rtems
           ref: ci
           repository: c-mauderer/rtems
+      - name: Cache build
+        # This is to avoid rebuilding all tools while testing github actions
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: rsb
+          key: ${{ runner.os }}-${{ hashFiles('rsb/**/*') }}
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -61,6 +68,7 @@ jobs:
             libpython3-dev \
             python3-dev
       - name: Build toolchain
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           cd rsb/rtems
           ../source-builder/sb-set-builder \
