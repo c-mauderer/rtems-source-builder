@@ -7,7 +7,7 @@ on:
   #pull_request:
   #  branches: [ ci ]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Trigger manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -36,6 +36,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          path: rsb
+      - uses: actions/checkout@v3
+        with:
+          path: rtems
+          ref: ci
+          repository: c-mauderer/rtems
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -55,15 +62,27 @@ jobs:
             python3-dev
       - name: Build toolchain
         run: |
-          cd rtems
+          cd rsb/rtems
           ../source-builder/sb-set-builder \
-            --log=1-${{ matrix.target }} \
+            --log=l-${{ matrix.target }} \
             --prefix=/opt/rtems/6 \
             --bset-tar-file \
-            --no-install \
             6/rtems-${{ matrix.target }}
+      - name: Archive log on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: log-${{ matrix.target }}
+          path: rsb/rtems/l-${{ matrix.target }}
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: rsb-${{ matrix.target }}
-          path: rtems/tar/*.tar*
+          name: tools-${{ matrix.target }}
+          path: rsb/rtems/tar/*.tar*
+      - name: Build BSPs
+        uses: ./rtems/.github/actions/build-bsps
+        with:
+          target: ${{ matrix.target }}
+          sources-rtems: rtems
+          tools-bin: /opt/rtems/6/bin
+
