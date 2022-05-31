@@ -16,8 +16,8 @@ jobs:
       matrix:
         target:
           #- aarch64
-          - arm
-          #- bfin
+          #- arm
+          - bfin
           #- i386
           #- lm32
           #- m68k
