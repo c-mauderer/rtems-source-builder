@@ -48,7 +48,9 @@ jobs:
         id: cache
         uses: actions/cache@v3
         with:
-          path: rsb
+          path: |
+            rsb
+            /opt/rtems
           key: ${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('rsb/[!.]**/*') }}
       - name: Install dependencies
         run: |
