@@ -30,7 +30,7 @@ jobs:
           #- riscv
           #- sh
           #- sparc
-          #- sparc64
+          - sparc64
           #- v850
           #- x86_64
     runs-on: ubuntu-latest
