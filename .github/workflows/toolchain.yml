@@ -1,11 +1,11 @@
-name: CI
+name: Toolchain
 
 on:
   # Triggers the workflow on push or pull request for the given branch
-  #push:
-  #  branches: [ ci ]
-  #pull_request:
-  #  branches: [ ci ]
+  push:
+    branches: [ ci ]
+  pull_request:
+    branches: [ ci ]
 
   # Trigger manually from the Actions tab
   workflow_dispatch:
