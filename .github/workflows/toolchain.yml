@@ -94,6 +94,6 @@ jobs:
         uses: ./rtems/.github/actions/build-bsps
         with:
           target: ${{ matrix.target }}
-          sources-rtems: rtems
+          sources-rtems: "${GITHUB_WORKSPACE}/rtems"
           prefix: /opt/rtems/6
 
