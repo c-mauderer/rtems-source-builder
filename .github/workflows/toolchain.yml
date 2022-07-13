@@ -90,10 +90,9 @@ jobs:
         with:
           name: tools-${{ matrix.target }}
           path: rsb/rtems/tar/*.tar*
-      - name: Build BSPs
-        uses: ./rtems/.github/actions/build-bsps
-        with:
-          target: ${{ matrix.target }}
-          sources-rtems: "${GITHUB_WORKSPACE}/rtems"
-          prefix: /opt/rtems/6
-
+      #- name: Build BSPs
+      #  uses: ./rtems/.github/actions/build-bsps
+      #  with:
+      #    target: ${{ matrix.target }}
+      #    sources-rtems: "${GITHUB_WORKSPACE}/rtems"
+      #    prefix: /opt/rtems/6
