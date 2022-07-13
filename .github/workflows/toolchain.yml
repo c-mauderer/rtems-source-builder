@@ -11,6 +11,37 @@ on:
   workflow_dispatch:
 
 jobs:
+  qemu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: rsb
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            build-essential
+      - name: Build qemu
+        run: |
+          cd rsb/rtems
+          ../source-builder/sb-set-builder \
+            --log=l-qemu \
+            --prefix=/opt/rtems/6 \
+            --bset-tar-file \
+            devel/qemu
+      - name: Archive log on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: log-qemu
+          path: rsb/rtems/l-qemu
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: devel-qemu
+          path: rsb/rtems/tar/*.tar*
+
   build:
     strategy:
       fail-fast: false
