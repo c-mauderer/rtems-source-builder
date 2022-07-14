@@ -138,3 +138,60 @@ jobs:
       #    target: ${{ matrix.target }}
       #    sources-rtems: "${GITHUB_WORKSPACE}/rtems"
       #    prefix: /opt/rtems/6
+
+  simulator:
+    needs:
+      - build
+      - qemu
+    strategy:
+      fail-fast: false
+      matrix:
+        simulators:
+          - sparc/erc32
+          - arm/xilinx_zynq_a9_qemu
+    runs-on: ubuntu-latest
+    steps:
+      - name: split arch and BSP
+        shell: bash
+        run: |
+          arch=`echo "${{ matrix.simulators }}" | sed -e "s|/.*||g"`
+          bsp=`echo "${{ matrix.simulators }}" | sed -e "s|.*/||g"`
+          echo "arch=${arch}" >> $GITHUB_ENV
+          echo "bsp=${bsp}" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+        with:
+          path: rtems
+          ref: ci
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            python3 \
+            python-is-python3 \
+            jq
+      - name: Download toolchain artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: tools-${{ env.arch }}
+      - name: Download qemu artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: devel-qemu
+      - name: Unpack toolchain
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/toolchain"
+          for t in *.tar.bz2; do tar xf $t -v -C "$GITHUB_WORKSPACE/toolchain"; done
+          ls -la "$GITHUB_WORKSPACE/toolchain"
+      - name: Start simulator run
+        id: simulator
+        uses: ./rtems/.github/actions/run-simulator
+        with:
+          target: ${{ matrix.simulators }}
+          sources-rtems: "$GITHUB_WORKSPACE/rtems"
+          prefix: "$GITHUB_WORKSPACE/toolchain/opt/rtems/6"
+      - name: Show report on failure
+        if: ${{ failure() }}
+        run: |
+          jq -S '.summary' <<EOF170635471293847
+          ${{ steps.simulator.outputs.report }}
+          EOF170635471293847
