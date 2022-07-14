@@ -162,6 +162,7 @@ jobs:
         with:
           path: rtems
           ref: ci
+          repository: c-mauderer/rtems
       - name: Install dependencies
         run: |
           sudo apt-get update
